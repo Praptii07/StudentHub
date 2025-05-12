@@ -4,6 +4,7 @@ import StudentList from './components/StudentList';
 import StudentFilter from './components/StudentFilter';
 import StudentForm from './components/StudentForm';
 import LoginButton from './components/LoginButton';
+import LogoutButton from './components/LogoutButton';
 import './App.css';
 
 function App() {
@@ -26,74 +27,73 @@ function App() {
     const courses = [...new Set(students.map(s => s.course))];
 
     return (
-        <div
-            className="app-container container py-5"
-            style={{
-                minHeight: '100vh', // Ensure full height
-                color: '#f1f1f1', // Light text
-            }}
-        >
-            <div className="d-flex justify-content-center mb-5">
+        <div className="app-container container py-5" style={{minHeight: '100vh', color: '#f1f1f1'}}>
+            {/* Heading */}
+            <div className="d-flex flex-column align-items-center mb-4">
                 <h1
-                    className="text-primary"
+                    className="text-primary text-center"
                     style={{
                         fontFamily: 'Poppins, sans-serif',
                         fontWeight: 700,
                         fontSize: '2.8rem',
                         letterSpacing: '1px',
-                        textAlign: 'center',
-                        borderBottom: '4px solid ',
+                        borderBottom: '4px solid',
                         paddingBottom: '12px',
                         maxWidth: '500px',
                         width: '100%',
                         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
                         borderRadius: '8px',
-
                     }}
                 >
                     StudentHub
                 </h1>
+
+                {user && (
+                    <div className="mt-3">
+                        <LogoutButton user={user} setUser={setUser}/>
+                    </div>
+                )}
             </div>
 
-            {/* Centered Card with Shadow */}
+            {/* Main Content Card */}
             <div
                 className="card p-4"
                 style={{
-                    backgroundColor: '#bababa', // Dark grey card background
+                    backgroundColor: '#bababa',
                     border: 'none',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
                     borderRadius: '16px',
-                    color: '#f1f1f1', // Light text inside the card
-                    width: '100%',
+                    color: '#f1f1f1',
                 }}
             >
-                {/* Display login and student filter */}
-                {!user ? (
-                    <div className="text-center mb-4">
-                        <p className="lead text-primary">Please log in to manage students</p>
+                {/* Login prompt */}
+                {!user && (
+                    <div className="text-center mb-4 ">
+                        <p className="lead text-primary">Log in to filter or add students</p>
                         <LoginButton user={user} setUser={setUser}/>
                     </div>
-                ) : (
-                    <>
-                        <div className="mb-4">
-                            {/* Full width Student Filter */}
-                            <StudentFilter courses={courses} selected={filter} onChange={setFilter}/>
-                        </div>
+                )}
 
-                        {/* Students List */}
-                        <div className="mb-4 ">
-                            <StudentList students={filtered}/>
-                        </div>
+                {/* Show student filter only if logged in */}
+                {user && (
+                    <div className="mb-4">
+                        <StudentFilter courses={courses} selected={filter} onChange={setFilter}/>
+                    </div>
+                )}
 
-                        {/* Form to add student */}
-                        <div className="p-4 mt-4">
-                            <StudentForm onAdd={handleAddStudent}/>
-                        </div>
-                    </>
+                {/* Always show student list */}
+                <div className="mb-4">
+                    <StudentList students={filtered}/>
+                </div>
+
+                {/* Show add form only if logged in */}
+                {user && (
+                    <div className="p-4 mt-4">
+                        <StudentForm onAdd={handleAddStudent}/>
+                    </div>
                 )}
             </div>
         </div>
-
     );
 }
 
